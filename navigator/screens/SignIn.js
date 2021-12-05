@@ -1,29 +1,104 @@
 import React,{useState, useEffect} from 'react'
-import { StyleSheet, TextInput, TouchableOpacity, ActivityIndicator } from 'react-native'
+import { StyleSheet, TextInput, TouchableOpacity, ActivityIndicator, ToastAndroid, Platform, AlertIOS } from 'react-native'
 import AuthContainer from '../../components/atoms/AuthContainer'
 import Text from '../../components/atoms/Text'
 import {THEME} from '../../config/themes'
 import OTPInputView from '@twotalltotems/react-native-otp-input'
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import Loader from '../../components/atoms/Loader'
+import { UserLogin, VerifyOTP } from '../../utils/api'
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { AuthContext } from '../../context/AuthContext'
+import { Toast } from '../../utils/alerts'
 
 const OTP = ({navigation}) => {
     const [isOTPView, setisOTPView] = useState(false);
     const [mobileNumber, setMobileNumber] = useState('');
     const [isLoading, setIsLoading] = useState(false);
     const [disabledState, setDisabledState] = useState(true);
+    const [OTP, setOTP] = useState('');
+
+    const {setIsSignedIn} = React.useContext(AuthContext);
 
     useEffect(() => {
-        (mobileNumber.length === 10) && setDisabledState(false);
+        const getData = async() => {
+            try {
+                const merchant = await AsyncStorage.getItem('merchant');
+                const isDataFilled = await AsyncStorage.getItem('businessDetails');
+                (merchant && !isDataFilled) && navigation.navigate('Setup', {step: 1});
+              } 
+              catch (err) {
+                  console.log(err);
+              }
+        };
+        getData();
+      }, []);
+
+    useEffect(() => {
+        if(mobileNumber.length === 10) setDisabledState(false);
+        else setDisabledState(true);
     }, [mobileNumber]);
 
     const handleSendOTP = () => {
-        setisOTPView(true);
         setDisabledState(true);
+        setIsLoading(true);
+        UserLogin({
+            phoneNumber: mobileNumber
+        })
+        .then(res => {
+            if(res.success){
+                Toast('OTP send successfully');
+                setisOTPView(true);
+            }
+        })
+        .catch(()=>{
+            Toast('Failed, try again');
+        });
+        setDisabledState(false);
+        setIsLoading(false);
     };
 
     const validateOTP = () => {
-        navigation.navigate('Setup', {step: 1});
+        setDisabledState(true);
+        setIsLoading(true);
+        var requestBody = {
+            number: mobileNumber,
+            otp: OTP
+        };
+        VerifyOTP(requestBody)
+        .then(res => {
+            if(res && res.success){
+                Toast('Verified');
+                (Platform.OS === 'android') ? ToastAndroid.show('Verified', ToastAndroid.SHORT)
+                  : AlertIOS.alert('Verified');
+                  handleAuthRouting(res.responseData);
+            }
+            else{
+                Toast('Wrong OTP!');
+                setisOTPView(false);
+            }
+        })
+        .catch((err)=>{
+            Toast('OTP send successfully');
+            setisOTPView(false);
+        });
+        setDisabledState(false);
+        setIsLoading(false);
+    };
+
+    const handleAuthRouting = async(authData) => {
+        try {
+            await AsyncStorage.setItem('merchant', authData.merchant.phoneNumber)
+            await AsyncStorage.setItem('businessDetails', authData.data_filled.toString())
+          } 
+        catch (err) {
+            console.log(err);
+        }
+        if(authData.data_filled){
+            setIsSignedIn(true);
+        }
+        else {
+            navigation.navigate('Setup', {step: 1});
+        }
     };
 
     return (
@@ -51,17 +126,17 @@ const OTP = ({navigation}) => {
                         <Text style={styles.label}>Enter OTP</Text>
                         <OTPInputView
                             style={{width: '100%', height:80}}
-                            pinCount={4}
+                            pinCount={6}
                             autoFocusOnLoad
                             codeInputFieldStyle={styles.underlineStyleBase}
                             codeInputHighlightStyle={styles.underlineStyleHighLighted}
                             onCodeFilled = {(code => {
                                 setDisabledState(false);
-                                console.log(`Code is ${code}, you are good to go!`)
+                                setOTP(code);
                             })}
                         />
                         <TouchableOpacity style={{...styles.btn, backgroundColor: disabledState ? THEME.color.disabled : THEME.color.primary}} onPress={validateOTP} disabled={disabledState}>
-                            <Text style={{textAlign: 'center', color: 'white'}}>Continue</Text>
+                            { isLoading ? <ActivityIndicator style={styles.loader} size="small" color="#0000ff" /> : <Text style={{textAlign: 'center', color: 'white'}}>Continue</Text> }
                         </TouchableOpacity>
                     </>
                 )

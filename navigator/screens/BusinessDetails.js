@@ -5,18 +5,21 @@ import Text from '../../components/atoms/Text'
 import { THEME } from '../../config/themes'
 import StickyButton from '../../components/molecules/StickyButton'
 import {moderateScale} from '../../config/scale';
-import { is } from '@babel/types'
-
+import { AuthContext } from '../../context/AuthContext'
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { Toast } from '../../utils/alerts';
+import {setMerchantDetails} from '../../utils/api';
 
 const BusinessDetails = ({navigation}) => {
     const [businessDetails, setBusinessDetails] = useState({
-        name: '',
-        category: '',
+        businessName: '',
+        businessCategory: '',
         city: '',
         pincode: ''
     });
     const [disabled, setDisabled] = useState(true);
-
+    const [loading, setLoading] = useState(false);
+    const {setuserDetails} = React.useContext(AuthContext);
 
     const updateDetails = (id, value) => {
         setBusinessDetails((prevState) => ({
@@ -25,10 +28,40 @@ const BusinessDetails = ({navigation}) => {
         }))
     };
 
+    const handleSubmit = async() => {
+        var phoneNumber;
+        try {
+            phoneNumber = await AsyncStorage.getItem('merchant');
+          } 
+          catch (err) {
+              console.log(err);
+        }
+        let businessData = {
+            ...businessDetails,
+            phoneNumber: phoneNumber
+        };
+        setLoading(true);
+        setDisabled(true);
+        setMerchantDetails(businessData)
+        .then(async(res) => {
+            if(res.success){
+                Toast('Details Saved');
+                setuserDetails(res.responseData.merchant);
+                await AsyncStorage.setItem('businessDetails', 'true');
+                navigation.navigate('Setup', {step:2});
+            }
+        })
+        .catch(()=>{
+            Toast('Failed, try again');
+        });
+        setLoading(true);
+        setDisabled(true);
+    };
+
+
     useEffect(() => {
         let isEmpty = false;
         Object.keys(businessDetails).map(key => {
-            console.log(businessDetails);
             if(businessDetails[key] === '') {
                 isEmpty = true;
                 return;
@@ -42,11 +75,11 @@ const BusinessDetails = ({navigation}) => {
             <Container>
                 <Text style={styles.heading}>Enter business details</Text>
                 <View style={styles.inputSection}>
-                    <Text style={styles.label}>Business name</Text>
+                    <Text style={styles.label}>Business Name</Text>
                     <TextInput
                         style={styles.input}
                         placeholder="Royal Bakery"
-                        onChangeText={text => updateDetails('name', text)}
+                        onChangeText={text => updateDetails('businessName', text)}
                     />
                 </View>
                 <View style={styles.inputSection}>
@@ -54,7 +87,7 @@ const BusinessDetails = ({navigation}) => {
                     <TextInput
                         style={styles.input}
                         placeholder="Bakery and Condiments"
-                        onChangeText={text => updateDetails('category', text)}
+                        onChangeText={text => updateDetails('businessCategory', text)}
                     />
                 </View>
                 <View style={styles.inputSection}>
@@ -75,7 +108,7 @@ const BusinessDetails = ({navigation}) => {
                     />
                 </View>
             </Container>
-            <StickyButton bg={disabled ? THEME.color.disabled : THEME.color.primary} color='white' onPress={() => navigation.navigate('Setup', {step:2})} disabled={disabled}>NEXT</StickyButton>
+            <StickyButton loading={loading} bg={disabled ? THEME.color.disabled : THEME.color.primary} color='white' onPress={handleSubmit} disabled={disabled}>NEXT</StickyButton>
         </>
     )
 }

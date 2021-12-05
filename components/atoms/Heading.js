@@ -5,7 +5,7 @@ import {moderateScale} from '../../config/scale';
 
 const Heading = (props) => {
     return (
-        <Text style={styles.heading}>{props.children}</Text>
+        <Text style={{...styles.heading, ...props.style}}>{props.children}</Text>
     )
 }
 

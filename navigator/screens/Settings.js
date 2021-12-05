@@ -2,14 +2,16 @@ import React from 'react'
 import { StyleSheet, Text, View, Image } from 'react-native'
 import { THEME } from '../../config/themes'
 import {moderateScale} from '../../config/scale';
+import { AuthContext } from '../../context/AuthContext';
 
 const Settings = () => {
+    const {userDetails} = React.useContext(AuthContext);
     return (
         <View>
             <View style={styles.businessProfile}>
                 <Image style={styles.shopImage} source={{uri: "https://property.myludhiana.com/wp-content/uploads/2016/05/property_placeholder.jpg"}}/>
                 <View>
-                    <Text>Royal Bakery</Text>
+                    <Text>{userDetails.businessName}</Text>
                     <Text style={styles.linkText}>Edit business profile</Text>
                 </View>
             </View>
