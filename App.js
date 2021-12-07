@@ -3,19 +3,27 @@ import { StyleSheet, Text, View } from 'react-native'
 import MainContainer from './navigator/MainContainer'
 import AuthNavigator from './navigator/AuthNavigator'
 import AsyncStorage from '@react-native-async-storage/async-storage';
-
+import Splash from './components/atoms/Splash';
 import { AuthContext } from './context/AuthContext'
+import {getMerchantDetails} from './utils/api';
 
 const App = () => {
   const [isSignedIn, setIsSignedIn] = useState(false);
   const [userDetails, setuserDetails] = useState({});
+  const [splash, setSplash] = useState(true);
 
   useEffect(() => {
     const getData = async() => {
       try {
         const merchant = await AsyncStorage.getItem('merchant');
         const isDataFilled = await AsyncStorage.getItem('businessDetails');
+        getMerchantDetails(merchant)
+        .then((res) => {
+          setuserDetails(res.responseData.merchant);
+          setSplash(false);
         (merchant && isDataFilled==='true') && setIsSignedIn(true);
+        })
+        .catch(err => console.log(err));
       } 
       catch (err) {
           console.log(err);
@@ -30,7 +38,11 @@ const App = () => {
       userDetails: userDetails,
       setuserDetails: setuserDetails
       }}>
-      {isSignedIn ? <MainContainer/> : <AuthNavigator/>}
+        {
+          splash ? <Splash/> : (
+            isSignedIn ? <MainContainer/> : <AuthNavigator/>
+          )
+        }
     </AuthContext.Provider>
     )
 }

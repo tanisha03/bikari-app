@@ -4,5 +4,7 @@ export default {
     sendOTP: () => `${ENDPOINT}/auth/sendOtp`,
     verifyOTP: () => `${ENDPOINT}/auth/verifyOtp`,
     merchantUpdate: () => `${ENDPOINT}/merchant/update`,
-    reviews:(bank,touchpoint) => `${ENDPOINT}/feedback/bank/${bank}/touchPoint/${touchpoint}/reviews`,
+    getMerchant:(id) => `${ENDPOINT}/merchant/${id}`,
+    getOffer:(id) => `${ENDPOINT}/offers/${id}`,
+    createOffer:(id) => `${ENDPOINT}/offers/create/${id}`,
 };

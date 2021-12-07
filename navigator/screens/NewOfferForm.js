@@ -7,16 +7,20 @@ import StickyButton from '../../components/molecules/StickyButton'
 import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import {moderateScale} from '../../config/scale';
+import { setOffer } from '../../utils/api';
+import { AuthContext } from '../../context/AuthContext';
 
 const NewOfferForm = ({navigation}) => {
-
+    const {userDetails} = React.useContext(AuthContext);
     const [offerDetails, setOfferDetails] = useState({
-        name: '',
-        description: '',
-        banner: '',
+        offerName: '',
+        offerDescription: '',
+        file: '',
     });
     const [disabled, setDisabled] = useState(true);
-
+    const [bannerName, setBannerName] = useState(null);
+    const [isLoading, setIsLoading] = useState(false);
+    var postData = new FormData();
 
     const updateDetails = (id, value) => {
         setOfferDetails((prevState) => ({
@@ -28,7 +32,6 @@ const NewOfferForm = ({navigation}) => {
     useEffect(() => {
         let isEmpty = false;
         Object.keys(offerDetails).map(key => {
-            console.log(offerDetails);
             if(offerDetails[key] === '') {
                 isEmpty = true;
                 return;
@@ -45,11 +48,26 @@ const NewOfferForm = ({navigation}) => {
           path: 'images',
         },
       };
+
+    const onOfferSubmit = () => {
+        setIsLoading(true);
+        postData = new FormData();
+        postData.append('offerName', offerDetails.offerName);
+        postData.append('offerDescription', offerDetails.offerDescription);
+        postData.append('file', {
+            uri: Platform.OS === 'android' ? offerDetails.file.uri : 'file://' + offerDetails.file.uri,
+            name: offerDetails.file.fileName,
+            type: offerDetails.file.type 
+        })
+        setOffer(userDetails.phoneNumber, postData)
+        .then(res => console.log(res))
+        .catch(err => console.log(err))
+        setIsLoading(false);
+        navigation.navigate('Setup', {step:3})
+    }
     
     function selectImage() {
-        launchImageLibrary(options, (response) => { // Use launchImageLibrary to open image gallery
-            console.log('Response = ', response);
-          
+        launchImageLibrary(options, (response) => { // Use launchImageLibrary to open image gallery          
             if (response.didCancel) {
               console.log('User cancelled image picker');
             } else if (response.error) {
@@ -57,8 +75,14 @@ const NewOfferForm = ({navigation}) => {
             } else if (response.customButton) {
               console.log('User tapped custom button: ', response.customButton);
             } else {
-              const source = { uri: response.assets[0].uri, name: response.assets[0].fileName };
-              updateDetails('banner', source);
+                postData.append('file', {
+                  name: response.assets[0].fileName,
+                  type: response.assets[0].type,
+                  uri:
+                    Platform.OS === 'android' ? response.assets[0].uri : response.assets[0].uri.replace('file://', ''),
+                });
+                updateDetails('file', response.assets[0]);
+                setBannerName(response.assets[0].uri);
             }
           });
       }
@@ -72,7 +96,7 @@ const NewOfferForm = ({navigation}) => {
                     <TextInput
                         style={styles.input}
                         placeholder="Super Diwali 2021 offer"
-                        onChangeText={text => updateDetails('name', text)}
+                        onChangeText={text => updateDetails('offerName', text)}
                     />
                 </View>
                 <View style={styles.inputSection}>
@@ -80,17 +104,17 @@ const NewOfferForm = ({navigation}) => {
                     <TextInput
                         style={styles.input}
                         placeholder="All products 30% off"
-                        onChangeText={text => updateDetails('description', text)}
+                        onChangeText={text => updateDetails('offerDescription', text)}
                     />
                 </View>
                 <View style={styles.inputSection}>
                     <Text style={styles.label}>Upload Bannner</Text>
                     <TouchableOpacity onPress={selectImage} style={styles.imagePicker}>
-                        {offerDetails?.banner?.name ? <Text>{offerDetails.banner.name}</Text> : <Ionicons name={'camera'} size={24} color={'#666'} />}
+                        {bannerName  ? <Text>{bannerName}</Text> : <Ionicons name={'camera'} size={24} color={'#666'} />}
                     </TouchableOpacity>  
                 </View>  
             </Container>
-            <StickyButton bg={disabled ? THEME.color.disabled : THEME.color.primary} color='white' onPress={() => navigation.navigate('Setup', {step:3})} disabled={disabled}>NEXT</StickyButton>
+            <StickyButton loading={isLoading} bg={disabled ? THEME.color.disabled : THEME.color.primary} color='white' onPress={() => onOfferSubmit()} disabled={disabled}>NEXT</StickyButton>
         </>
     )
 }

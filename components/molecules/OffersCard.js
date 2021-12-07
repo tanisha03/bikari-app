@@ -8,7 +8,7 @@ import Heading from '../atoms/Heading'
 const OffersCard = (props) => {
     return (
         <Card bg='white' style={{marginBottom: 20}}>
-            <Image style={styles.image} source={{uri: 'https://static-cse.canva.com/blob/651733/posters.jpg'}} />
+            <Image style={styles.image} source={{uri: props.url}} />
             <Heading>{props.title}</Heading>
             <Text>{props.description}</Text>
             <View style={styles.btnTab}>

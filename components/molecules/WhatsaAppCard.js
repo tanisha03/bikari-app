@@ -5,31 +5,17 @@ import Card from '../atoms/Card';
 import Button from '../atoms/Button'
 import Heading from '../atoms/Heading'
 import {moderateScale} from '../../config/scale';
+import { AuthContext } from '../../context/AuthContext';
+import { sendWhatsAppMessage } from '../../utils/linking';
 
 const WhatsAppCard = () => {
-    const sendWhatsAppMessage = link => {
-        if (!(link===undefined)) {
-         Linking.canOpenURL(link)
-          .then(supported => {
-            if (!supported) {
-             alert(
-               'Please install whats app to send direct message to students via whatsapp'
-             );
-           } else {
-             return Linking.openURL(link);
-           }
-         })
-         .catch(err => console.error('An error occurred', err));
-       } else {
-         console.log('sendWhatsAppMessage -----> ', 'message link is undefined');
-        }
-       };
+    const {userDetails} = React.useContext(AuthContext);
 
     return (
         <Card bg='white' style={{marginBottom: moderateScale(28)}}>
             <Heading>Share offers on WhatsApp</Heading>
             <Text>Share with your customers to stay upto date with your offer list</Text>
-            <Button bg='#4BCA5A' color='white' style={{marginTop: moderateScale(24)}} onPress={() => sendWhatsAppMessage('https://wa.me/?text=%7B0%7D+Balaji+CTest')}>SHARE</Button>
+            <Button bg='#4BCA5A' color='white' style={{marginTop: moderateScale(24)}} onPress={() => sendWhatsAppMessage(`https://wa.me/?text=%${userDetails.storeWhatsappMsg}`)}>SHARE</Button>
         </Card>
     )
 }
