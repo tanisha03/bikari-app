@@ -19,13 +19,16 @@ const App = () => {
         const isDataFilled = await AsyncStorage.getItem('businessDetails');
         getMerchantDetails(merchant)
         .then((res) => {
-          setuserDetails(res.responseData.merchant);
+          if(res){
+            setuserDetails(res.responseData.merchant);
+            (merchant && isDataFilled==='true') && setIsSignedIn(true);
+          }
           setSplash(false);
-        (merchant && isDataFilled==='true') && setIsSignedIn(true);
         })
-        .catch(err => console.log(err));
+        .catch(err => setSplash(false));
       } 
       catch (err) {
+          setSplash(false);
           console.log(err);
       }
     };

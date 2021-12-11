@@ -38,7 +38,7 @@ const Setup = ({route, navigation}) => {
                             <Text>Enter Business details</Text>
                             {
                                 progressStep===1 && (
-                                    <TouchableOpacity onPress={() => navigation.navigate('BusinessDetails')}>
+                                    <TouchableOpacity onPress={() => navigation.navigate('BusinessDetails', {first: true})}>
                                         <Text style={{color: THEME.color.primary}}>START</Text>
                                     </TouchableOpacity>
                                 )
@@ -59,7 +59,7 @@ const Setup = ({route, navigation}) => {
                                 progressStep===2 && 
                                 (
                                     <View style={{flex: 1, flexDirection: 'row'}}>
-                                        <TouchableOpacity onPress={() => navigation.navigate('NewOfferForm')}>
+                                        <TouchableOpacity onPress={() => navigation.navigate('NewOfferForm', {first: true})}>
                                             <Text style={{color: THEME.color.primary, marginRight: 12}}>START</Text>
                                         </TouchableOpacity>
                                         <TouchableOpacity onPress={() => setProgressStep(3)}>
@@ -83,7 +83,7 @@ const Setup = ({route, navigation}) => {
                             {
                                 progressStep===3 && 
                                 <TouchableOpacity>
-                                    <Text style={{color: THEME.color.primary}}>SHARE</Text>
+                                    <Text style={{color: THEME.color.primary}} onPress={() => setIsSignedIn(true)}>SHARE</Text>
                                 </TouchableOpacity>
                             }
                         </View>

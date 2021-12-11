@@ -6,7 +6,7 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 //Screens 
 import HomeStackNavigation from './navigationStacks/HomeStackNavigation';
 import OffersStackNavigation from './navigationStacks/offersNavigation';
-import Settings from './screens/Settings';
+import SettingsStackNavigation from './navigationStacks/SettingNavigation';
 
 const Tab = createBottomTabNavigator();
 
@@ -24,10 +24,10 @@ const MainContainer = () => {
                         if (rn === 'Home') {
                         iconName = focused ? 'home' : 'home-outline';
 
-                        } else if (rn === 'Offers') {
+                        } else if (rn === 'Offer') {
                         iconName = focused ? 'bookmark' : 'bookmark-outline';
 
-                        } else if (rn === 'Settings') {
+                        } else if (rn === 'Setting') {
                         iconName = focused ? 'settings' : 'settings-outline';
                         }
 
@@ -44,8 +44,8 @@ const MainContainer = () => {
                 }}>
 
                 <Tab.Screen name={'Home'} component={HomeStackNavigation} />
-                <Tab.Screen name={'Offers'} component={OffersStackNavigation} />
-                <Tab.Screen name={'Settings'} component={Settings} />
+                <Tab.Screen name={'Offer'} component={OffersStackNavigation} />
+                <Tab.Screen name={'Setting'} component={SettingsStackNavigation} />
 
             </Tab.Navigator>
         </NavigationContainer>

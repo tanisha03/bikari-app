@@ -1,5 +1,6 @@
 import React from 'react'
-import { StyleSheet, Text, TouchableOpacity, ActivityIndicator } from 'react-native'
+import { StyleSheet, TouchableOpacity, ActivityIndicator } from 'react-native'
+import Text from './Text'
 
 const Button = (props) => {
     return (

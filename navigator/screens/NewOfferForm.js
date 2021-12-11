@@ -4,14 +4,15 @@ import Container from '../../components/atoms/Container'
 import Text from '../../components/atoms/Text'
 import { THEME } from '../../config/themes'
 import StickyButton from '../../components/molecules/StickyButton'
-import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
+import {launchImageLibrary} from 'react-native-image-picker';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import {moderateScale} from '../../config/scale';
 import { setOffer } from '../../utils/api';
 import { AuthContext } from '../../context/AuthContext';
 
-const NewOfferForm = ({navigation}) => {
+const NewOfferForm = ({route, navigation}) => {
     const {userDetails} = React.useContext(AuthContext);
+    const { first } = route.params;
     const [offerDetails, setOfferDetails] = useState({
         offerName: '',
         offerDescription: '',
@@ -60,10 +61,14 @@ const NewOfferForm = ({navigation}) => {
             type: offerDetails.file.type 
         })
         setOffer(userDetails.phoneNumber, postData)
-        .then(res => console.log(res))
+        .then(() => {
+            setIsLoading(false);
+            if(first)
+                navigation.navigate('Setup', {step:3})
+            else
+                navigation.navigate('Offers')
+        })
         .catch(err => console.log(err))
-        setIsLoading(false);
-        navigation.navigate('Setup', {step:3})
     }
     
     function selectImage() {
@@ -96,6 +101,7 @@ const NewOfferForm = ({navigation}) => {
                     <TextInput
                         style={styles.input}
                         placeholder="Super Diwali 2021 offer"
+                        placeholderTextColor="#c1c1c1" 
                         onChangeText={text => updateDetails('offerName', text)}
                     />
                 </View>
@@ -104,6 +110,7 @@ const NewOfferForm = ({navigation}) => {
                     <TextInput
                         style={styles.input}
                         placeholder="All products 30% off"
+                        placeholderTextColor="#c1c1c1" 
                         onChangeText={text => updateDetails('offerDescription', text)}
                     />
                 </View>
@@ -136,7 +143,8 @@ const styles = StyleSheet.create({
         borderWidth: 1,
         padding: moderateScale(12),
         borderRadius: 2,
-        borderColor: THEME.color.text
+        borderColor: THEME.color.text,
+        color: 'black'
     },
     imagePicker: {
         width: '100%',

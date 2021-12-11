@@ -10,8 +10,9 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Toast } from '../../utils/alerts';
 import {setMerchantDetails} from '../../utils/api';
 
-const BusinessDetails = ({navigation}) => {
-    const [businessDetails, setBusinessDetails] = useState({
+const BusinessDetails = ({route, navigation}) => {
+    const { details, first } = route.params;
+    const [businessDetails, setBusinessDetails] = useState(details || {
         businessName: '',
         businessCategory: '',
         city: '',
@@ -42,13 +43,18 @@ const BusinessDetails = ({navigation}) => {
         };
         setLoading(true);
         setDisabled(true);
+        console.log('------START')
         setMerchantDetails(businessData)
         .then(async(res) => {
+            console.log('------END')
             if(res.success){
                 Toast('Details Saved');
                 setuserDetails(res.responseData.merchant);
                 await AsyncStorage.setItem('businessDetails', 'true');
-                navigation.navigate('Setup', {step:2});
+                if(first)
+                    navigation.navigate('Setup', {step:2});
+                else
+                    navigation.navigate('Settings')
             }
         })
         .catch(()=>{
@@ -62,8 +68,9 @@ const BusinessDetails = ({navigation}) => {
     useEffect(() => {
         let isEmpty = false;
         Object.keys(businessDetails).map(key => {
-            if(businessDetails[key] === '') {
+            if(businessDetails[key].length < 3) {
                 isEmpty = true;
+                setDisabled(true);
                 return;
             }
         })
@@ -78,7 +85,9 @@ const BusinessDetails = ({navigation}) => {
                     <Text style={styles.label}>Business Name</Text>
                     <TextInput
                         style={styles.input}
+                        value={businessDetails.businessName}
                         placeholder="Royal Bakery"
+                        placeholderTextColor="#c1c1c1" 
                         onChangeText={text => updateDetails('businessName', text)}
                     />
                 </View>
@@ -86,7 +95,9 @@ const BusinessDetails = ({navigation}) => {
                     <Text style={styles.label}>Business category</Text>
                     <TextInput
                         style={styles.input}
+                        value={businessDetails.businessCategory}
                         placeholder="Bakery and Condiments"
+                        placeholderTextColor="#c1c1c1" 
                         onChangeText={text => updateDetails('businessCategory', text)}
                     />
                 </View>
@@ -94,7 +105,9 @@ const BusinessDetails = ({navigation}) => {
                     <Text style={styles.label}>City</Text>
                     <TextInput
                         style={styles.input}
+                        value={businessDetails.city}
                         placeholder="Bangalore"
+                        placeholderTextColor="#c1c1c1" 
                         onChangeText={text => updateDetails('city', text)}
                     />
                 </View>
@@ -102,8 +115,10 @@ const BusinessDetails = ({navigation}) => {
                     <Text style={styles.label}>Pincode</Text>
                     <TextInput
                         style={styles.input}
+                        value={businessDetails.pincode.toString()}
                         placeholder="452010"
-                        keyboardType="numeric"
+                        keyboardType="numeric" 
+                        placeholderTextColor="#c1c1c1" 
                         onChangeText={text => updateDetails('pincode', text)}
                     />
                 </View>
@@ -130,6 +145,7 @@ const styles = StyleSheet.create({
         borderWidth: 1,
         padding: moderateScale(12),
         borderRadius: 2,
-        borderColor: THEME.color.text
+        borderColor: THEME.color.text,
+        color: 'black'
     },
 })

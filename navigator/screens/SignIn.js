@@ -17,7 +17,7 @@ const OTP = ({navigation}) => {
     const [disabledState, setDisabledState] = useState(true);
     const [OTP, setOTP] = useState('');
 
-    const {setIsSignedIn} = React.useContext(AuthContext);
+    const {setIsSignedIn, setuserDetails} = React.useContext(AuthContext);
 
     useEffect(() => {
         const getData = async() => {
@@ -70,7 +70,7 @@ const OTP = ({navigation}) => {
                 Toast('Verified');
                 (Platform.OS === 'android') ? ToastAndroid.show('Verified', ToastAndroid.SHORT)
                   : AlertIOS.alert('Verified');
-                  handleAuthRouting(res.responseData);
+                handleAuthRouting(res.responseData);
             }
             else{
                 Toast('Wrong OTP!');
@@ -78,7 +78,7 @@ const OTP = ({navigation}) => {
             }
         })
         .catch((err)=>{
-            Toast('OTP send successfully');
+            Toast('Failed, try again!');
             setisOTPView(false);
         });
         setDisabledState(false);
@@ -93,12 +93,8 @@ const OTP = ({navigation}) => {
         catch (err) {
             console.log(err);
         }
-        if(authData.data_filled){
-            setIsSignedIn(true);
-        }
-        else {
-            navigation.navigate('Setup', {step: 1});
-        }
+        setuserDetails(authData.merchant);
+        (authData.data_filled) ? setIsSignedIn(true) : navigation.navigate('Setup', {step: 1});
     };
 
     return (
@@ -158,7 +154,8 @@ const styles = StyleSheet.create({
         borderWidth: 1,
         padding: 10,
         borderRadius: 2,
-        borderColor: THEME.color.text
+        borderColor: THEME.color.text,
+        color: 'black'
     },
     btn: {
         padding: 12,

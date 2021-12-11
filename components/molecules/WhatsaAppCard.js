@@ -1,5 +1,5 @@
 import React from 'react'
-import { StyleSheet, Linking } from 'react-native';
+import { StyleSheet } from 'react-native';
 import Text from '../atoms/Text';
 import Card from '../atoms/Card';
 import Button from '../atoms/Button'

@@ -1,11 +1,20 @@
-import React from 'react'
-import { StyleSheet, Text, View, Image } from 'react-native'
+import React, {useState, useEffect} from 'react'
+import { StyleSheet, View, Image } from 'react-native'
 import { AuthContext } from '../../context/AuthContext';
 import {moderateScale} from '../../config/scale';
 import Heading from '../../components/atoms/Heading';
+import {getAnalytics} from '../../utils/api';
+import Text from '../../components/atoms/Text';
 
 export default function Profile() {
     const {userDetails} = React.useContext(AuthContext);
+    const [analyticsData, setAnalyticsData] = useState({});
+
+    useEffect(() => {
+        getAnalytics(userDetails.phoneNumber)
+        .then(res => setAnalyticsData(res.responseData))
+        .catch(err => console.log(err))
+    }, [])
     return (
         <View>
             <View style={styles.businessProfile}>
@@ -21,15 +30,15 @@ export default function Profile() {
             <Heading style={{textAlign: 'center'}}>Business Overview</Heading>
             <View style={styles.insightsListItems}>
                     <Text>Customers</Text>
-                    <Text>45</Text>
+                    <Text>{analyticsData.numCustomers}</Text>
             </View>
             <View style={styles.insightsListItems}>
                     <Text>Offers</Text>
-                    <Text>6</Text>
+                    <Text>{analyticsData.numOffers}</Text>
             </View>
             <View style={styles.insightsListItems}>
                     <Text>Reach</Text>
-                    <Text>150</Text>
+                    <Text>{parseInt(analyticsData.numCustomers*1.5)}</Text>
             </View>
         </View>
     )

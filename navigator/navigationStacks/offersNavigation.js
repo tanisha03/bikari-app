@@ -3,6 +3,7 @@ import React from 'react'
 import {createStackNavigator} from '@react-navigation/stack'
 import NewOfferForm from '../screens/NewOfferForm'
 import Offers from '../screens/Offers'
+import Test from '../screens/Test'
 
 const Stack = createStackNavigator()
 
@@ -14,7 +15,7 @@ const OffersStackNavigation = () => {
                 component={Offers}
             />
             <Stack.Screen
-                name="NewOffer"
+                name="Create"
                 component={NewOfferForm}
             />
         </Stack.Navigator>
