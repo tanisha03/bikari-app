@@ -43,10 +43,8 @@ const BusinessDetails = ({route, navigation}) => {
         };
         setLoading(true);
         setDisabled(true);
-        console.log('------START')
         setMerchantDetails(businessData)
         .then(async(res) => {
-            console.log('------END')
             if(res.success){
                 Toast('Details Saved');
                 setuserDetails(res.responseData.merchant);
@@ -123,7 +121,7 @@ const BusinessDetails = ({route, navigation}) => {
                     />
                 </View>
             </Container>
-            <StickyButton loading={loading} bg={disabled ? THEME.color.disabled : THEME.color.primary} color='white' onPress={handleSubmit} disabled={disabled}>NEXT</StickyButton>
+            <StickyButton loading={loading} bg={disabled ? THEME.color.disabled : THEME.color.primary} color='white' onPress={handleSubmit} disabled={disabled || loading}>NEXT</StickyButton>
         </>
     )
 }

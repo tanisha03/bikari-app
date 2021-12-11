@@ -60,13 +60,17 @@ const NewOfferForm = ({route, navigation}) => {
             name: offerDetails.file.fileName,
             type: offerDetails.file.type 
         })
+        console.log(offerDetails.file)
         setOffer(userDetails.phoneNumber, postData)
-        .then(() => {
-            setIsLoading(false);
-            if(first)
-                navigation.navigate('Setup', {step:3})
-            else
-                navigation.navigate('Offers')
+        .then((res) => {
+            if(res.success){
+                setIsLoading(false);
+                if(first)
+                    navigation.navigate('Setup', {step:3})
+                else
+                    navigation.navigate('Offers')
+            }
+            else alert(res);
         })
         .catch(err => console.log(err))
     }
@@ -121,7 +125,7 @@ const NewOfferForm = ({route, navigation}) => {
                     </TouchableOpacity>  
                 </View>  
             </Container>
-            <StickyButton loading={isLoading} bg={disabled ? THEME.color.disabled : THEME.color.primary} color='white' onPress={() => onOfferSubmit()} disabled={disabled}>NEXT</StickyButton>
+            <StickyButton loading={isLoading} bg={disabled ? THEME.color.disabled : THEME.color.primary} color='white' onPress={onOfferSubmit} disabled={disabled || isLoading}>NEXT</StickyButton>
         </>
     )
 }

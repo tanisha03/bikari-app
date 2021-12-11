@@ -19,7 +19,7 @@ const Settings = ({navigation}) => {
             city: userDetails.city,
             pincode: userDetails.pincode
         })
-    }, []);
+    }, [userDetails]);
 
     const handleSignOut = async() => {
         try {

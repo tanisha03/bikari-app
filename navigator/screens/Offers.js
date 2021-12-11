@@ -16,10 +16,6 @@ const Offers = ({navigation}) => {
         getOffers(userDetails.phoneNumber)
         .then((res) => {
             setOffers(res.responseData.data.reverse());
-            setuserDetails((prevProps) => ({
-                ...prevProps,
-                offers: res.responseData.data.reverse()
-            }));
         })
         .catch(err => console.log(err))
     })
