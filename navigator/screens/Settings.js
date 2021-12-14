@@ -41,7 +41,7 @@ const Settings = ({navigation}) => {
     return (
         <View>
             <View style={styles.businessProfile}>
-                <Image style={styles.shopImage} source={{uri: "https://property.myludhiana.com/wp-content/uploads/2016/05/property_placeholder.jpg"}}/>
+                <Image style={styles.shopImage} source={{uri: "https://cdn.icon-icons.com/icons2/1706/PNG/512/3986701-online-shop-store-store-icon_112278.png"}}/>
                 <View>
                     <Text>{userDetails.businessName}</Text>
                     <TouchableOpacity onPress={() => navigation.navigate('Edit', {details: businessDetails})}>

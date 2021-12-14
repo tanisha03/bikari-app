@@ -28,7 +28,7 @@ const Offers = ({navigation}) => {
             {
                 offers.length!==0 ? offers.map(offer => (
                     <OffersCard key={offer.offerId} data={offer}/>
-                )) : <Heading>Create a new offer!</Heading>
+                )) : <Heading>No offers yet. Create a new offer by clicking on the plus button!</Heading>
             }
         </Container>
         </>
