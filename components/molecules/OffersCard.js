@@ -1,12 +1,13 @@
 import React from 'react'
-import { StyleSheet, Image, View, Share } from 'react-native';
+import { StyleSheet, Image, View } from 'react-native';
 import Text from '../atoms/Text';
 import Card from '../atoms/Card';
 import Button from '../atoms/Button'
 import Heading from '../atoms/Heading'
 import {broadcastOffer} from '../../utils/api';
 import { Toast } from '../../utils/alerts';
-
+import { ImageUrlToBase64 } from '../../utils/linking';
+import Share from 'react-native-share';
 
 const OffersCard = ({data}) => {
 
@@ -16,10 +17,10 @@ const OffersCard = ({data}) => {
     };
 
     const handleShare = async(msg, url) => {
-        Share.share({
-            title: 'Offer',
+        let base64 = await ImageUrlToBase64(url);
+        Share.open({
             message: msg,
-            url: url
+            url: `data:image/jpeg;base64,${base64}`,
           });
     }
 

@@ -1,4 +1,20 @@
 import { Linking } from 'react-native';
+import RNFetchBlob from "rn-fetch-blob";
+
+export const ImageUrlToBase64 = (url) => {
+    const fs = RNFetchBlob.fs;
+    let imagePath = null;
+    return RNFetchBlob.config({
+      fileCache: true
+    })
+    .fetch("GET", url)
+    .then(resp => {
+      imagePath = resp.path();
+      return resp.readFile("base64");
+    })
+    .then(base64Data => base64Data);
+};
+
 
 export const sendWhatsAppMessage = link => {
     if (!(link===undefined)) {
