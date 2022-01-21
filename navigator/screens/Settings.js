@@ -53,7 +53,7 @@ const Settings = ({navigation}) => {
                 <Ionicons name={'share-outline'} size={18} color={THEME.color.disabled} />
                 <Text style={styles.listItemText}>Share Bikari App</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.settingsListItem} onPress={() => Linking.openURL('https://www.bikari.in/').catch(err => console.error("Couldn't load page", err))}>
+            <TouchableOpacity style={styles.settingsListItem} onPress={() => Linking.openURL('https://play.google.com/store/apps/details?id=com.bikari').catch(err => console.error("Couldn't load page", err))}>
                 <Ionicons name={'star-outline'} size={18} color={THEME.color.disabled} />
                 <Text style={styles.listItemText}>Rate us</Text>
             </TouchableOpacity>

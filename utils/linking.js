@@ -16,13 +16,15 @@ export const ImageUrlToBase64 = (url) => {
 };
 
 
-export const sendWhatsAppMessage = link => {
+export const sendWhatsAppMessage = url => {
+    let link = url.replace('% ','');
+    console.log(link);
     if (!(link===undefined)) {
      Linking.canOpenURL(link)
       .then(supported => {
         if (!supported) {
          alert(
-           'Please install whats app to send direct message to students via whatsapp'
+           'Please install whats app to send direct message via whatsapp'
          );
        } else {
          return Linking.openURL(link);

@@ -4,7 +4,7 @@ Hello!
 
 I use Bikari to manage my local business. To join my offer list, click on this link: join.bikari.in and send the message and type ${id}.
 
-You can start an offer campaign to get your local customers in 40 seconds with Bikari. Download the Bikari app from Playstore.
+You can start an offer campaign to get your local customers in 40 seconds with Bikari. Download the Bikari app from Playstore: https://play.google.com/store/apps/details?id=com.bikari.
 
 https://www.bikari.in/
 
